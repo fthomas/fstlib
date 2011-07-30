@@ -1,4 +1,6 @@
+#include <functional>
 #include <QDir>
+#include <QList>
 #include <QString>
 
 struct dir_exists : public std::unary_function<QDir, bool> {
@@ -8,15 +10,17 @@ struct dir_exists : public std::unary_function<QDir, bool> {
 };
 
 struct dir_contains : public std::unary_function<QDir, bool> {
-  explicit dir_exists_and_contains(const QList<QString>& paths)
-    : paths_(paths) {}
+  explicit dir_contains(const QList<QString>& paths) : paths_(paths) {}
 
-  explicit dir_exists_and_contains(const QString& path) {
+  explicit dir_contains(const QString& path) : paths_() {
     paths_.append(path);
   }
 
   bool operator()(const QDir& dir) const {
-    // dir.exists(path_);
+    foreach (const QString& path, paths_) {
+      if (!dir.exists(path)) return false;
+    }
+    return dir.exists();
   }
 
  private:
