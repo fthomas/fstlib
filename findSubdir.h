@@ -30,5 +30,11 @@ struct dir_contains : public std::unary_function<QDir, bool> {
 template<class Predicate>
 QString findSubdir(QString subdir, QList<QDir> search_dirs,
                    Predicate pred = dir_exists()) {
-
+  foreach (const QDir& search_dir, search_dirs) {
+    QDir possible_dir = search_dir.absolutePath() + "/" + subdir;
+    if (pred(possible_dir)) {
+      return possible_dir.absolutePath();
+    }
+  }
+  return "";
 }
